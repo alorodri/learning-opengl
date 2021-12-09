@@ -5,9 +5,18 @@
 
 #include <iostream>
 
-void render();
-
 using uint = unsigned int;
+
+void render();
+void checkShaderCompiledSuccesfully(uint vertexShader);
+
+const char* vertexShaderSource = "#version 460 core\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "void main()\n"
+    "{\n"
+    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    "}\0";
+
 int main() {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -31,6 +40,16 @@ int main() {
 
     glViewport(0, 0, Window::WIDTH, Window::HEIGHT);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+    // VERTEX SHADER START
+    uint vertexShader;
+    vertexShader = glCreateShader(GL_VERTEX_SHADER); // <- assigns just an ID
+
+    // compilation
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL); // we pass shader source to the shader (with id)
+    glCompileShader(vertexShader);
+    checkShaderCompiledSuccesfully(vertexShader);
+    // VERTEX SHADER END
 
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
@@ -65,4 +84,15 @@ void render()  {
     // DYNAMIC_DRAW -> changed a lot and used many times
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     // VERTEX INPUT END
+}
+
+void checkShaderCompiledSuccesfully(uint vertexShader) {
+    int success;
+    char infoLog[512];
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+
+    if (!success) {
+        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
 }

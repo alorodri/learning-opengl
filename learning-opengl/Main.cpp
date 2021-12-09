@@ -1,8 +1,11 @@
 #include "Constants.h"
 #include "Headers.h"
+#include "Input.h"
 #include "Window.h"
 
 #include <iostream>
+
+void render();
 
 int main() {
     glfwInit();
@@ -29,9 +32,19 @@ int main() {
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     while (!glfwWindowShouldClose(window)) {
+        processInput(window);
+
+        render();
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
+    glfwTerminate();
     return 0;
+}
+
+void render()  {
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 }

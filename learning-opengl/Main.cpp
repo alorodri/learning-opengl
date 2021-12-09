@@ -26,6 +26,12 @@ int main() {
     }
 
     glViewport(0, 0, Window::WIDTH, Window::HEIGHT);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+    while (!glfwWindowShouldClose(window)) {
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
 
     return 0;
 }
